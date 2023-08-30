@@ -1,0 +1,59 @@
+#Task 2: Run httpd package and Ansible inventory update
+
+a. Create an ini type Ansible inventory file /home/thor/playbook/inventory on jump host.
+
+b. Add App Server 2 in this inventory along with required variables that are needed to make it work.
+
+c. The inventory hostname of host should be the server name as per wiki, for example stapp01 for app server 1 in Stratos DC.
+
+### Playbook.yaml
+
+- hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: Install httpd package    
+      yum: 
+        name: httpd 
+        state: installed
+    
+    - name: Start service httpd
+      service:
+        name: httpd
+        state: started
+
+
+
+
+#Inventory file
+
+stapp02 ansible_host=172.16.238.11 ansible_connection=ssh ansible_ssh_pass=Am3ric@ ansible_user=steve
+
+
+
+#Commands
+
+# To check synatax
+Ansible-playbook -i inventory playbook –syantax-check 
+
+# To predict what changes will happen
+Ansible-playbook -i inventory playbook -C
+
+#playbook run
+Ansible-playbook -i inventory playbook
+
+#Verification httpd service
+
+ansible all -i /home/thor/playbook/inventory -a "systemctl status httpd"
+
+#In this command:
+
+ansible: The command to run Ansible.
+all: The target hosts. In this case, it means all hosts from the inventory.
+-i /home/thor/playbook/inventory: Specifies the path to the inventory file.
+-a "systemctl status httpd": Specifies the module to run (-a for ad-hoc commands) and the command to execute (systemctl status httpd)#
+
+
+
+
+
