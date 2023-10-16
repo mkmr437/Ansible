@@ -1,0 +1,67 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: update repo index
+    apt: 
+      update_cache: yes
+    when: ansible_distribution in ["Debian", "ubuntu"] 
+
+  - name: install apache2 package
+    apt:
+      name: 
+        - apache2
+        - httpd
+      state: latest
+    when: ansible_distribution == "ubuntu"
+
+  - name: Services 
+    tags: apache,apache2
+    Service:
+       name: httpd
+       state: started
+    when: ansible_distribution == "Centos"
+
+  - name: change email address for admin
+    tags: apache
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@xyz.com
+    when: ansible_distribution == "Centos"
+    register: httpd #stores the value in httpd varible
+
+
+  - name: restart httpd
+    Service:
+       name: httpd
+       state: restarted
+    when: httpd.changed  #this will trigger service when there is a change in varible httpd
+
+
+# Create a User accoutn on all hosts
+- hosts: all
+  become: true
+  tasks:
+  # create a user account
+  - name: Create a User
+    tags: always
+    User: 
+      name: usernames
+      groups: root
+  # add public key authrozation for username
+  - name: add ssh key for username
+    tags: always
+    authorized_key:
+       user: username
+       key: "paste Pub key"
+  # add user to sudoders file so that user can use sudo without pwd
+  - name: add sudoers file for username
+    copy:
+      src: sudoer_usernmae
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+      mode: 0440
+  

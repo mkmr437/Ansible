@@ -1,0 +1,40 @@
+#Task:
+
+a. Create an inventory file ~/playbook/inventory on jump host and add all app servers in it.
+b. Create a playbook ~/playbook/playbook.yml to create a blank file /opt/data.txt on all app servers.
+c. The /opt/data.txt file permission must be 0655.
+d. The user/group owner of file /opt/data.txt must be tony on app server 1, steve on app server 2 and banner on app server 3.
+
+#playbook.yaml
+
+---
+- name: Ansible File Module
+  hosts: all
+  become: yes
+  tasks:
+   - name: Create a blank file /opt/data.txt on all app servers
+     file:
+       path: /opt/data.txt
+       owner: "{{ansible_user}}"
+       group: "{{ansible_user}}"
+       mode: "0655"
+       state: touch
+   
+   - name: Run the output  
+     shell: 'ls -ltr /opt/data.txt'
+     register: command_output
+   
+   - debug:
+        var: command_output.stdout_lines
+
+#Command:
+
+#  -C, --check           don't make any changes; instead, try to predict some of the changes that may occur
+ # -D, --diff            when changing (small) files and templates, show the differences in those files; works great with --check
+
+
+ansible-playbook -i ~/playbook/inventory ~/playbook/playbook.yml -C -D
+
+# Commands
+ansible-playbook -i ~/playbook/inventory ~/playbook/playbook.yml
+
