@@ -1,0 +1,52 @@
+Task
+
+Create an archive beta.tar.gz (make sure archive format is tar.gz) of /usr/src/security/ directory ( present on each app server ) and copy it to /opt/security/ directory on all app servers. The user and group owner of archive beta.tar.gz should be tony for App Server 1, steve for App Server 2 and banner for App Server 3.
+
+# Inventory
+stapp01 ansible_host=172.16.238.10 ansible_ssh_pass=Ir0nM@n ansible_user=tony
+stapp02 ansible_host=172.16.238.11 ansible_ssh_pass=Am3ric@ ansible_user=steve
+stapp03 ansible_host=172.16.238.12 ansible_ssh_pass=BigGr33n ansible_user=banner
+
+# yaml
+---
+- name: Create an Archive
+  hosts: all
+  become: yes
+  tasks:
+  - name: Archive
+    archive:
+      path: /usr/src/security/
+      dest: /opt/security/beta.tar.gz
+      format: gz
+      force_archive: true
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+  - name: Register output
+    shell: ls -ltr /opt/security/beta.tar.gz    
+    register: installer_output
+  - name: Debug
+    debug:
+      var: installer_output.stdout_lines
+
+# Relavant explanation
+archive:: This is an Ansible module for creating archives. It has several parameters:
+path: /usr/src/security/: The source directory that will be archived.
+dest: /opt/security/beta.tar.gz: The destination path for the created archive.
+format: gz: The format of the archive, in this case, it's a gzip-compressed tar file.
+force_archive: true: If set to true, the archive will be created even if the destination file already exists.
+
+owner: "{{ ansible_user }}": The owner of the archive file will be set to the same user as the Ansible user running the playbook.
+
+group: "{{ ansible_user }}": The group of the archive file will be set to the same group as the Ansible user running the playbook.
+
+
+
+
+# This command will give the ansible user variable
+ansible all -i inventory -m debug -a 'var=ansible_user'
+
+# this command will provide all information ansible facts
+
+ansible all -i inventory -m setup
+
+
