@@ -1,0 +1,34 @@
+# Task
+We have an inventory file under /home/thor/ansible directory on jump host, which should have all the app servers added already.
+There is a zip archive /usr/src/security/nautilus.zip on jump host.
+Create a playbook.yml under /home/thor/ansible/ directory on jump host itself to perform the below given tasks.
+Unzip /usr/src/security/nautilus.zip archive in /opt/security/ location on all app servers.
+Make sure the extracted data must has the respective sudo user as their user and group owner, i.e tony for app server 1, steve for app server 2, banner for app server 3.
+The extracted data permissions must be 0744.
+
+# Inventory
+stapp01 ansible_host=172.16.238.10 ansible_ssh_pass=Ir0nM@n ansible_user=tony
+stapp02 ansible_host=172.16.238.11 ansible_ssh_pass=Am3ric@ ansible_user=steve
+stapp03 ansible_host=172.16.238.12 ansible_ssh_pass=BigGr33n ansible_user=banner
+
+# Yaml
+
+---
+- name: Unarhive
+  hosts: all
+  become: yes
+  tasks:
+  - name: unarchive folder
+    unarchive:
+      src: /usr/src/security/nautilus.zip
+      dest: /opt/security/
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: "0744"
+
+  - name: Register output
+    shell: ls -ltr /opt/security
+    register: command_output
+  - name: print the output
+    debug: 
+      var: command_output
