@@ -1,0 +1,52 @@
+# Task:
+
+Using the playbook, install httpd web server on all app servers. Additionally, make sure its service should up and running.
+Using blockinfile Ansible module add some content in /var/www/html/index.html file. Below is the content:
+
+
+Welcome to XfusionCorp!
+
+This is Nautilus sample file, created using Ansible!
+
+Please do not modify this file manually!
+
+The /var/www/html/index.html file's user and group owner should be apache on all app servers.
+The /var/www/html/index.html file's permissions should be 0655 on all app servers.
+
+---
+- name: Blockinfile module
+  hosts: all
+  become: yes
+  tasks:
+  - name: Install httpd
+    package:
+     name: httpd
+     state: latest
+  - name: Apache service start
+    service:
+      name: httpd
+      state: started
+  - name: blockinfile
+    blockinfile:
+      path: /var/www/html/index.html
+      create: yes
+      block: |
+        Welcome to XfusionCorp!
+        This is Nautilus sample file, created using Ansible!
+        Please do not modify this file manually!
+      owner: apache
+      group: apache
+      mode: "0644 "
+  - name: output
+    shell: 'ls -ltr /var/www/html'
+    register: service_output
+  - name: register output
+    shell: cat /var/www/html/index.html
+    register: index_output
+ 
+  - name: printout the output
+    debug: 
+      var: service_output
+  - name: printout
+    debug:
+      var: index_output
