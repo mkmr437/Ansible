@@ -6,8 +6,8 @@
       Create a symbolic link of source path /opt/devops to destination /var/www/html.
 
 ### 2. Create an empty file /opt/devops/story.txt on app server 2; its user owner and group owner should be steve.
-   Create a symbolic link of source path /opt/devops to destination /var/www/html.
+       Create a symbolic link of source path /opt/devops to destination /var/www/html.
 
 ### 3. Create an empty file /opt/devops/media.txt on app server 3; its user owner and group owner should be banner.
-   Create a symbolic link of source path /opt/devops to destination /var/www/html
+       Create a symbolic link of source path /opt/devops to destination /var/www/html
 
