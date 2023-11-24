@@ -1,0 +1,44 @@
+- name: Create an symbolic link
+  hosts: all
+  become: yes
+  tasks:
+  - name: Create an blog.txt empty file
+    file:
+      path: /opt/devops/blog.txt
+      state: touch
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+    when: ansible_hostname == "stapp01"
+
+  - name: Create an story.txt file
+    file:
+      path: /opt/devops/story.txt
+      state: touch
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+    when: ansible_hostname == "stapp02"
+ 
+  - name: Create an media.txt file
+    file:
+      path: /opt/devops/media.txt
+      state: touch
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+    when: ansible_hostname == "stapp03"
+ 
+  - name: Create symbolic link
+    file:
+      src: /opt/devops
+      dest: /var/www/html
+      state: link
+
+  - name: Print the output for all servers
+    shell: 'ls -ltr /opt/devops/'
+    register: result
+
+  - name: output
+    debug: 
+      var: result.stdout_lines
+
+ ansible all -i inventory -m debug -a 'var=ansible_user'
+ ansible all -i inventoty -m debug -a 'var=ansible_hostnmae'     
