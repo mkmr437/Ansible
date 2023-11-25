@@ -1,0 +1,57 @@
+- name: Managing ACLss
+  hosts: all
+  become: yes
+  tasks:
+  - name: Create an empty file blog.txt
+    file:
+      path: /opt/data/blog.txt
+      state: touch
+    when: ansible_hostname == "stapp01"
+  - name: setting up ACLss on blog.txt
+    acl:
+      path: /opt/data/blog.txt
+      entity: "{{ansible_user}}"
+      etype: group
+      permissions: r
+      state: present
+    when: ansible_hostname == "stapp01"
+
+  - name: Create an story.txt file
+    file:
+      path: /opt/data/story.txt
+      state: touch
+    when: ansible_hostname == "stapp02"
+  - name: setting up ACLss on story.txt
+    acl:
+      path: /opt/data/story.txt
+      entity: "{{ansible_user}}"
+      etype: user
+      permissions: rw
+      state: present
+    when: ansible_hostname == "stapp02"
+ 
+  - name: Create an media.txt file
+    file:
+      path: /opt/data/media.txt
+      state: touch
+    when: ansible_hostname == "stapp03"
+  - name: setting up ACLss on media.txt
+    acl:
+      path: /opt/data/media.txt
+      entity: "{{ansible_user}}"
+      etype: group
+      permissions: rw
+      state: present
+    when: ansible_hostname == "stapp03"
+
+  - name: obtain ACL for a file
+    acl: 
+      path: /opt/data/
+    register: acl_info
+
+  - name: output
+    debug: 
+      var: acl_info
+
+# To get ACL info for  a file
+ansible all -i inventory -m shell -a 'getfacl -R /opt/data/blog.txt'
