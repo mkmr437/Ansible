@@ -1,0 +1,19 @@
+- name: Install httpd
+  hosts: all
+  become: yes
+  tasks:
+  - name: httpd
+    package:
+      name: httpd
+      state: present
+  - name: service 
+    service:
+      name: httpd
+      enabled: yes
+      state: started
+  - name: obtain service status
+    shell: 'systemctl status httpd'
+    register: status
+  - name: display the output
+    debug:
+     var: status
