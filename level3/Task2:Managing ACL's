@@ -4,12 +4,12 @@
   tasks:
   - name: Create an empty file blog.txt
     file:
-      path: /opt/data/blog.txt
+      path: /opt/security/blog.txt
       state: touch
     when: ansible_hostname == "stapp01"
   - name: setting up ACLss on blog.txt
     acl:
-      path: /opt/data/blog.txt
+      path: /opt/security/blog.txt
       entity: "{{ansible_user}}"
       etype: group
       permissions: r
@@ -18,12 +18,12 @@
 
   - name: Create an story.txt file
     file:
-      path: /opt/data/story.txt
+      path: /opt/security/story.txt
       state: touch
     when: ansible_hostname == "stapp02"
   - name: setting up ACLss on story.txt
     acl:
-      path: /opt/data/story.txt
+      path: /opt/security/story.txt
       entity: "{{ansible_user}}"
       etype: user
       permissions: rw
@@ -32,12 +32,12 @@
  
   - name: Create an media.txt file
     file:
-      path: /opt/data/media.txt
+      path: /opt/security/media.txt
       state: touch
     when: ansible_hostname == "stapp03"
   - name: setting up ACLss on media.txt
     acl:
-      path: /opt/data/media.txt
+      path: /opt/security/media.txt
       entity: "{{ansible_user}}"
       etype: group
       permissions: rw
@@ -46,7 +46,7 @@
 
   - name: obtain ACL for a file
     acl: 
-      path: /opt/data/
+      path: /opt/security/
     register: acl_info
 
   - name: output
@@ -54,4 +54,4 @@
       var: acl_info
 
 # To get ACL info for  a file
-ansible all -i inventory -m shell -a 'getfacl -R /opt/data/blog.txt'
+ansible all -i inventory -m shell -a 'getfacl -R /opt/security/blog.txt'
